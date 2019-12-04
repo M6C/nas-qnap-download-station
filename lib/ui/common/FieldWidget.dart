@@ -6,8 +6,9 @@ class FieldWidget extends StatefulWidget {
   dynamic onSubmitted;
   TextEditingController ctrl;
   dynamic ctrlListener;
+  bool obscureText;
 
-  FieldWidget(this.initialVaue, this.hintText, {this.onSubmitted, this.ctrl, this.ctrlListener, Key key}) : super(key: key);
+  FieldWidget(this.initialVaue, this.hintText, {this.obscureText = false, this.onSubmitted, this.ctrl, this.ctrlListener, Key key}) : super(key: key);
 
   @override
   _FieldWidget createState() => new _FieldWidget();
@@ -29,6 +30,8 @@ class _FieldWidget extends State<FieldWidget> {
           padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: new TextField(
 //            decoration: new InputDecoration(hintText: widget.hintText, contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0)),
+            decoration: InputDecoration(labelText: widget.hintText, hintText: widget.hintText,),
+            obscureText: widget.obscureText,
             controller: _ctrl,
             textCapitalization: TextCapitalization.none,
             onSubmitted: widget.onSubmitted,

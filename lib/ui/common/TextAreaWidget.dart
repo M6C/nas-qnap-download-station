@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TextAreaWidget extends StatefulWidget {
+
   String text;
   TextEditingController ctrl;
+  bool obscureText;
 
-  TextAreaWidget(this.text, this.ctrl, {Key key}) : super(key: key) {
-
-  }
+  TextAreaWidget(this.text, this.ctrl, {this.obscureText = false, Key key,}) : super(key: key);
 
   @override
   _TextAreaWidget createState() => new _TextAreaWidget();
@@ -36,19 +36,20 @@ class _TextAreaWidget extends State<TextAreaWidget> {
                 constraints: BoxConstraints(
                   maxHeight: 300.0,
                 ),
-                child: new Scrollbar(
+//                child: new Scrollbar(
                   child: new SingleChildScrollView(
                     scrollDirection: Axis.vertical,
 //                    reverse: true,
                     child: new TextField(
                       decoration: new InputDecoration.collapsed(hintText: ""),
+                      obscureText: widget.obscureText,
 //                      readOnly: true,
                       maxLines: null,
                       controller: _ctrl,
                       onTap: _onTag,
                     ),
                   ),
-                ),
+//                ),
               ),
             )
           )

@@ -1,9 +1,10 @@
 import 'dart:async';
-
 import 'dart:convert' as convert;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' hide Element;
 import 'package:nas_qnap_download_station/ui/GrabSiteDrawer.dart';
+import 'package:nas_qnap_download_station/ui/common/FieldDropDownWidget.dart';
 import 'package:nas_qnap_download_station/ui/common/FieldWidget.dart';
 import 'package:nas_qnap_download_station/ui/common/TextAreaWidget.dart';
 import 'package:nas_qnap_download_station/ui/data/data_url.dart';
@@ -23,16 +24,23 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
   static final RegExp expProtocol = new RegExp("^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)");
   static List<Response> urlResponses = new List();
   static String url = DATA_URL;
-  static String server = "http://91.165.213.137:60601";//""http://192.168.0.17:8080";
-  static String dirMove = "Download";
+  static List<String> serverItems = ["http://91.165.213.137:60601", "http://192.168.0.17:8080"];
+  static List<String> dirMoveItems = ["Download", "USBDisk1"];
+  static String server = serverItems[0];
+  static String dirMove = dirMoveItems[0];
   static String sid = "";
+  static String urlNASUser = "admin";
+  static String urlNASPass = "UjMyMTREMzIxNE5BUw==";
   static String urlUrlUser = "david.roca@free.fr";
   static String urlUrlPass = "yCnrv7pDy67mSdyu";
   static bool _log = false;
+  static bool _detail = false;
   var _ctrlServer = new TextEditingController(text:server);
   var _ctrlDirMove = new TextEditingController(text:dirMove);
   var _ctrlSid = new TextEditingController(text:sid);
   var _ctrlUrl = new TextEditingController(text:url);
+  var _ctrlNASUser = new TextEditingController(text:urlNASUser);
+  var _ctrlNASPass = new TextEditingController(text:urlNASPass);
   var _ctrlUrlUser = new TextEditingController(text:urlUrlUser);
   var _ctrlUrlPass = new TextEditingController(text:urlUrlPass);
 
@@ -45,6 +53,8 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
     _ctrlDirMove.addListener(_ctrlDirMovListener);
     _ctrlSid.addListener(_ctrlSidListener);
     _ctrlUrl.addListener(_ctrlUrlListener);
+    _ctrlNASUser.addListener(_ctrlNASUserListener);
+    _ctrlNASPass.addListener(_ctrlNASPassListener);
     _ctrlUrlUser.addListener(_ctrlUrlUserListener);
     _ctrlUrlPass.addListener(_ctrlUrlPassListener);
   }
@@ -55,6 +65,8 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
     _ctrlDirMove.dispose();
     _ctrlSid.dispose();
     _ctrlUrl.dispose();
+    _ctrlNASUser.dispose();
+    _ctrlNASPass.dispose();
     _ctrlUrlUser.dispose();
     _ctrlUrlPass.dispose();
   }
@@ -70,34 +82,85 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: new Text(_getUrlDownloadStationTaskAddUrlLite()),
+              padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded( // wrap your Column in Expanded
+                    child: new Text(_getUrlDownloadStationTaskAddUrl("", obscurePass: true)),
+                  ),
+                  FlatButton(
+                    child: _detail ? const Icon(Icons.arrow_drop_up) : const Icon(Icons.arrow_drop_down),
+                    onPressed: (){ setState(() {_detail=!_detail;}); },
+                    splashColor: Theme.of(context).accentColor,
+                  ),
+                ],
+              ),
             ),
-            new FieldWidget(server, "Server Url", ctrl: _ctrlServer, onSubmitted : (text){}),
-            new FieldWidget(dirMove, "Directory to Move", ctrl: _ctrlDirMove, onSubmitted : (text){}),
-            new FieldWidget(urlUrlUser, "User", ctrl: _ctrlUrlUser, onSubmitted : (text){}),
-            new FieldWidget(urlUrlPass, "Password", ctrl: _ctrlUrlPass, onSubmitted : (text){}),
+            !_detail ? Container() : Card(color: Colors.white70,
+              child:
+            Column(children: <Widget>[
+                new FieldDropDownWidget(server, "Server Url", ctrl: _ctrlServer, items: serverItems, onSubmitted : (text){}),
+                new FieldDropDownWidget(dirMove, "Directory to Move", ctrl: _ctrlDirMove, items: dirMoveItems, onSubmitted : (text){}),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding( padding: const EdgeInsets.only(top: 16.0), child: new Text("NAS Authentication"),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded( // wrap your Column in Expanded
+                          child: new FieldWidget(urlNASUser, "User", ctrl: _ctrlNASUser, onSubmitted : (text){}),
+                        ),
+                        Expanded( // wrap your Column in Expanded
+                          child: new FieldWidget(urlNASPass, "Password", obscureText: true, ctrl: _ctrlNASPass, onSubmitted : (text){}),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding( padding: const EdgeInsets.only(top: 16.0), child: new Text("Url Authentication"),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded( // wrap your Column in Expanded
+                          child: new FieldWidget(urlUrlUser, "User", ctrl: _ctrlUrlUser, onSubmitted : (text){}),
+                        ),
+                        Expanded( // wrap your Column in Expanded
+                          child: new FieldWidget(urlUrlPass, "Password", obscureText: true, ctrl: _ctrlUrlPass, onSubmitted : (text){}),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
-                  child: Text("Call New SID"),
-//                  textTheme: sid.isEmpty ? ButtonTextTheme.accent : ButtonTextTheme.primary,
-                  textColor: sid.isEmpty ? Colors.red : Theme.of(context).accentColor,
-//                  splashColor: Theme.of(context).accentColor,
-                  onPressed: _updateSid,
+                Expanded( flex: sid.isEmpty ? 1 : 0,
+                  child:
+                    FlatButton(
+                    child: Text("Call New SID"),
+                    textColor: sid.isEmpty ? Colors.red : Theme.of(context).accentColor,
+                    onPressed: _updateSid,
+                  ),
                 ),
-                Expanded( // wrap your Column in Expanded
+                sid.isEmpty ? Container() : Expanded( // wrap your Column in Expanded
                   child: new FieldWidget(sid, "SID", onSubmitted : (text){}),
                 ),
               ],
             ),
+            Expanded(child:
             Stack(alignment: AlignmentDirectional.topEnd,children: <Widget>[
               TextAreaWidget(url, _ctrlUrl,),
               Text(url.split("\n").length.toString()),
             ],),
-            urlResponses.length <= 0 ? new Text("") : new Expanded(
+            ),
+            urlResponses.length <= 0 ? Container() : new Expanded(
               child: ListView.builder(itemCount: urlResponses.length, itemBuilder: _buildItemCard),
             ),
           ],
@@ -197,14 +260,15 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
   void _ctrlDirMovListener() => setState(() { dirMove = _ctrlDirMove.text; });
   void _ctrlSidListener() =>  setState(() { sid = _ctrlSid.text; });
   void _ctrlServerListener() => setState(() { server = _ctrlServer.text; });
+  void _ctrlNASUserListener() => setState(() { urlNASUser = _ctrlNASUser.text; });
+  void _ctrlNASPassListener() => setState(() { urlNASPass = _ctrlNASPass.text; });
   void _ctrlUrlUserListener() => setState(() { urlUrlUser = _ctrlUrlUser.text; });
   void _ctrlUrlPassListener() => setState(() { urlUrlPass = _ctrlUrlPass.text; });
   void _ctrlUrlListener() => setState(() { url = _ctrlUrl.text; });
 
   var htmlEscape = new convert.HtmlEscape();
-  String _getUrlDownloadStationTaskAddUrl(String url) => "$server/downloadstation/V4/Task/AddUrl?sid=$sid&temp=Download&move=$dirMove&user=$urlUrlUser&pass=${convert.base64.encode(convert.utf8.encode(urlUrlPass))}&url=${url}";
-  String _getUrlDownloadStationTaskAddUrlLite() => "$server/downloadstation/V4/Task/AddUrl?sid=$sid&temp=Download&move=$dirMove";
-  String _getUrlDownloadStationMiscLogin() => "$server/downloadstation/V4/Misc/Login?user=admin&pass=UjMyMTREMzIxNE5BUw==";
+  String _getUrlDownloadStationTaskAddUrl(String url, {bool obscurePass = false}) => "$server/downloadstation/V4/Task/AddUrl?sid=$sid&temp=Download&move=$dirMove&user=$urlUrlUser&pass=${obscurePass ? "*******" : convert.base64.encode(convert.utf8.encode(urlUrlPass))}&url=${url}";
+  String _getUrlDownloadStationMiscLogin() => "$server/downloadstation/V4/Misc/Login?user=$urlNASUser&pass=$urlNASPass";
 
   void _logInfo(String text) {
     if (_log) {
