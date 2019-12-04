@@ -27,36 +27,32 @@ class _TextAreaWidget extends State<TextAreaWidget> {
   Widget build(BuildContext context) {
     return
       /*new Expanded(
-        child: */Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            color: Colors.white70,
-            child: Container(
-              child: new ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 300.0,
-                ),
-//                child: new Scrollbar(
-                  child: new SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-//                    reverse: true,
-                    child: new TextField(
-                      decoration: new InputDecoration.collapsed(hintText: ""),
-                      obscureText: widget.obscureText,
+        child: */
+      Card(
+        color: Colors.white70,
+//        child: Container(
+//          child: new ConstrainedBox(
+//            constraints: BoxConstraints(
+////              maxHeight: 300.0,
+//            ),
+////                child: new Scrollbar(
+//              child: new SingleChildScrollView(
+//                scrollDirection: Axis.vertical,
+////                    reverse: true,
+                child: new TextField(
+                  decoration: new InputDecoration.collapsed(hintText: ""),
+                  obscureText: widget.obscureText,
 //                      readOnly: true,
-                      maxLines: null,
-                      controller: _ctrl,
-                      onTap: _onTag,
-                    ),
-                  ),
-//                ),
+                  maxLines: null,
+                  controller: _ctrl,
+                  onTap: _onTag,
+                )/*,
               ),
-            )
-          )
-        )//,
-      //)
-    ;
-     //])
+//                ),
+          ),
+        )*/
+      )
+      ;
   }
 
   _onTag() {

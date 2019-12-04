@@ -78,7 +78,7 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
         title: Text("${widget.title} ${urlResponses.length}"),
       ),
       drawer: GrabSiteDrawer(),
-      body: Center(
+      body: Scrollbar(
         child: Column(
           children: <Widget>[
             Padding(
@@ -155,11 +155,17 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
               ],
             ),
             Expanded(child:
-            Stack(alignment: AlignmentDirectional.topEnd,children: <Widget>[
-              TextAreaWidget(url, _ctrlUrl,),
-              Text(url.split("\n").length.toString()),
-            ],),
-            ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:
+                  Stack(/*fit: StackFit.expand, */alignment: AlignmentDirectional.topEnd,children: <Widget>[
+                  TextAreaWidget(url, _ctrlUrl,),
+                    Text(url.split("\n").length.toString(), textAlign: TextAlign.end,),
+                  ],
+                ),
+              )
+            )
+            ,
             urlResponses.length <= 0 ? Container() : new Expanded(
               child: ListView.builder(itemCount: urlResponses.length, itemBuilder: _buildItemCard),
             ),
