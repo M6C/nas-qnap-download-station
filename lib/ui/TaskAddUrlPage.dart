@@ -75,7 +75,7 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.title} ${urlResponses.length}"),
+        title: Text("${widget.title}${urlResponses.length > 0 ? " $urlResponses.length" : ""}"),
       ),
       drawer: GrabSiteDrawer(),
       body: Scrollbar(
@@ -159,8 +159,15 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
                 padding: const EdgeInsets.all(8.0),
                 child:
                   Stack(/*fit: StackFit.expand, */alignment: AlignmentDirectional.topEnd,children: <Widget>[
-                  TextAreaWidget(url, _ctrlUrl,),
-                    Text(url.split("\n").length.toString(), textAlign: TextAlign.end,),
+                    TextAreaWidget(url, _ctrlUrl,),
+                    Row(mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                      Text(url.split("\n").length.toString(), textAlign: TextAlign.end,),
+                      Padding(
+                        padding: const EdgeInsets.only(right:8.0),
+                        child: IconButton(icon: Icon(Icons.clear), onPressed: () {setState(() {_ctrlUrl.clear();});},),
+                      ),
+                    ],),
                   ],
                 ),
               )
