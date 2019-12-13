@@ -155,26 +155,40 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
               ],
             ),
             Expanded(child:
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child:
-                  Stack(/*fit: StackFit.expand, */alignment: AlignmentDirectional.topEnd,children: <Widget>[
-                    TextAreaWidget(url, _ctrlUrl,),
-                    Row(mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                      Text(url.split("\n").length.toString(), textAlign: TextAlign.end,),
-                      Padding(
-                        padding: const EdgeInsets.only(right:8.0),
-                        child: IconButton(icon: Icon(Icons.clear), onPressed: () {setState(() {_ctrlUrl.clear();});},),
-                      ),
-                    ],),
-                  ],
-                ),
-              )
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+              Stack(/*fit: StackFit.expand, */alignment: AlignmentDirectional.topEnd,children: <Widget>[
+                TextAreaWidget(url, _ctrlUrl,),
+                Row(mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(url.split("\n").length.toString(), textAlign: TextAlign.end,),
+                    Padding(
+                      padding: const EdgeInsets.only(right:8.0),
+                      child: IconButton(icon: Icon(Icons.clear), onPressed: () {setState(() {_ctrlUrl.clear();});},),
+                    ),
+                  ],),
+              ],
+              ),
             )
-            ,
-            urlResponses.length <= 0 ? Container() : new Expanded(
-              child: ListView.builder(itemCount: urlResponses.length, itemBuilder: _buildItemCard),
+            ),
+            urlResponses.length <= 0 ? Container() : Expanded(child:
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+              Stack(/*fit: StackFit.expand, */alignment: AlignmentDirectional.topEnd,children: <Widget>[
+                ListView.builder(itemCount: urlResponses.length, itemBuilder: _buildItemCard),
+                Row(mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(urlResponses.length.toString(), textAlign: TextAlign.end,),
+                    Padding(
+                      padding: const EdgeInsets.only(right:8.0),
+                      child: IconButton(icon: Icon(Icons.clear), onPressed: () {setState(() {urlResponses.clear();});},),
+                    ),
+                  ],),
+              ],
+              ),
+            )
             ),
           ],
         ),
@@ -227,7 +241,7 @@ class _TaskAddUrlPageState extends State<TaskAddUrlPage> {
         return;
     }
     try {
-      loaderAddUrl.onLoading(context, titleWidget: _loadingTitle(fabIcon, _loadingText()));
+      loaderAddUrl.onLoading(context, titleWidget: _loadingTitle(fabIcon, _loadingText()), closeOnLostFocus: false,);
       _clean();
 
       List<String> list = url.split("\n").where((u){return u.isNotEmpty;}).toList();

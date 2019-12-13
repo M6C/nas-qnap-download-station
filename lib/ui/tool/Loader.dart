@@ -9,7 +9,7 @@ class Loader {
     return _isLoading;
   }
 
-  Future onLoading(context, {titleWidget}) async {
+  Future onLoading(context, {titleWidget, bool closeOnLostFocus = true}) async {
     Completer ret = new Completer();
     if (_isLoading) {
       return ret.future;
@@ -21,9 +21,11 @@ class Loader {
       builder: (context) {
         return WillPopScope(
           onWillPop: () {
-            _isLoading = false;
-            ret.complete();
-            return Future.value(true);
+            if (closeOnLostFocus) {
+              _isLoading = false;
+              ret.complete();
+            }
+            return Future.value(closeOnLostFocus);
           },
           child: new Dialog(
             child: Padding(
